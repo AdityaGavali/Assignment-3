@@ -1,188 +1,176 @@
-#include<stdio.h>
-void display(){
-  int a[100][100],b[100][100],i,j,k,r,c;
-  int choice =1;
+#include <stdio.h>
 
-  printf("___________________________\n");
-  printf("Enter no rows and columns for matrix 1:\n");
-  scanf("%d%d",&r,&c);
-  printf("___________________________\n");
-  for(i=0;i<r;i++){
-    for(j=0;j<c;j++){
-      a[i][j]=0;
+void display(int *A, int m, int n)
+{
+    printf("\n");
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+            printf("\t%d", *A++);
+        printf("\n");
     }
-  }
-
-  printf("Enter elements :\n");
-  for(i =0;i<r;i++){
-    for(j=0;j<c;j++){
-      scanf("%d",&a[i][j]);
-    }
-  }
-  printf("\n___________________________\n");
-  
-
-  
- printf("ENTERED MATRIX 1\n");
- for(i=0;i<r;i++){
-   for(j=0;j<c;j++){
-     printf("%d\t",a[i][j]);
-   }
-   printf("\n");
- }
-
- 
- printf("TRIPPLET REPRESENTATION OF ENTERED MATRIX 1\n");
- printf("R\tC\tV\n");
- for(i=0;i<r;i++){
-   for(j=0;j<c;j++){
-     if(a[i][j]!=0){
-       printf("%d\t %d\t%d\t",i, j, a[i][j]);
-       printf("\n");
-     }
-     
-   }
-  
- }
+    printf("\n");
 }
+
+int T[100][3];
+int T1[100][3];
+
+void convert(int *A, int m, int n)
+{
+    T[0][0] = m;
+    T[0][1] = n;
+    int k = 1;
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+        {
+            if (*(A) != 0)
+            {
+                T[k][0] = i;
+                T[k][1] = j;
+                T[k++][2] = *A;
+            }
+            (A++);
+        }
+    T[0][2] = k - 1;
+
+    display(T[0], k, 3);
+}
+
+void _convert(int *A, int m, int n)
+{
+    T1[0][0] = m;
+    T1[0][1] = n;
+    int k = 1;
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+        {
+            if (*(A) != 0)
+            {
+                T1[k][0] = i;
+                T1[k][1] = j;
+                T1[k++][2] = *A;
+            }
+            (A++);
+        }
+    T1[0][2] = k - 1;
+
+    display(T1[0], k, 3);
+}
+
+void fast_transpose()
+{
+    int Result[100][3], total[T[0][1]], index[(T[0][1]) + 1];
+    for (int i = 0; i < T[0][1]; i++)
+        total[i] = 0;
+    for (int i = 1; i <= T[0][2]; i++)
+        total[T[i][1]]++;
+    index[0] = 1;
+    for (int i = 1; i <= T[0][1]; i++)
+        index[i] = index[i - 1] + total[i - 1];
+    Result[0][0] = T[0][1];
+    Result[0][1] = T[0][0];
+    Result[0][2] = T[0][2];
+    for (int i = 1; i <= T[0][2]; i++)
+    {
+        int loc = index[T[i][1]];
+        Result[loc][0] = T[i][1];
+        Result[loc][1] = T[i][0];
+        Result[loc][2] = T[i][2];
+        index[T[i][1]]++;
+    }
+    for (int i = 0; i <= Result[0][2]; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            printf("\t%d", Result[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void accept(int *A, int m, int n)
+{
+    printf("\n");
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+        {
+            printf("A[%d][%d] = ", i, j);
+            scanf("%d", &*(A++));
+        }
+    printf("\n");
+}
+
+void add(int *A, int m, int n)
+{
+    int S1[m][n], add[100][3];
+    int c1 = 1, c2 = 1, cm = 0;
+    accept(S1[0], m, n);
+    _convert(S1[0], m, n);
+    add[0][0] = m;
+    add[0][1] = n;
+    for (int i = 0; i < m; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            int flag = 0;
+            if (T[c1][0] == i && T[c1][1] == j)
+            {
+                cm++;
+                add[cm][0] = i;
+                add[cm][1] = j;
+                add[cm][2] = T[c1][2];
+                c1++;
+                flag = 1;
+            }
+            if (T1[c2][0] == i && T1[c2][1] == j)
+            {
+                if (!flag)
+                {
+                    cm++;
+                    add[cm][2] = 0;
+                }
+                add[cm][0] = i;
+                add[cm][1] = j;
+                add[cm][2] += T1[c2][2];
+                c2++;
+            }
+        }
+    }
+    add[0][2] = cm;
+    display(add[0], cm +1 , 3);
+}
+
 int main()
 {
-  int a[10][3],b[10][3],c[10][3],r1,c1,v1,r2,c2,v2,k=1;
-  int choice;
-  int count=0;
-  printf("SELECTION\n");
-  printf("1.Display in format\n2Addition of two matrix\n3.Transpose of matri\nx");
-  scanf("%d",&choice);
-
-  switch(choice)
-  {
-    case 1:
-    display();
-    
-    
-    case 2:
-printf("Enter no of rows,columns and values of matrix 1\n");
-  scanf("%d%d%d",&r1,&c1,&v1);
-  a[0][0]=r1;
-  a[0][1]=c1;
-  a[0][2]=v1;
-  printf("MATRIX_1 :\n");
-  printf("ROW\tCOLUMN\tVALUE\n");
-
-  for(int i=1;i<=v1;i++)
-  {
-    scanf("%d%d%d",&a[i][0],&a[i][1],&a[i][2]);
-
+    int m, n;
+     int ch ;
+    printf("Enter no. of rows and columns : ");
+    scanf("%d%d", &m, &n);
+    int S[m][n];
+    do
+    {
+        printf("1. Accept\n2. Display\n3. Convert\n4. FAST-TRANPOSE\n5. Add\n0. Exit\n");
+        printf("\nEnter your choice :");
+        scanf("%d", &ch);
+        switch (ch)
+        {
+        case 1:
+            accept(S[0], m, n);
+            break;
+        case 2:
+            display(S[0], m, n);
+            break;
+        case 3:
+            convert(S[0], m, n);
+            break;
+        case 4:
+            fast_transpose();
+            break;
+        case 5:
+            add(S[0], m, n);
+        default:
+            printf("Wrong input");
+        }
+    }while(ch!=0);
+    return 0;
   }
-
-  
-
-printf("enter no of rows ,columns and values of matrix 2\n");
-  scanf("%d%d%d",&r2,&c2,&v2);
-  b[0][0]=r2;
-  b[0][1]=c2;
-  b[0][2]=v2;
- printf("MATRIX_2 :\n");
-  printf("ROW\tCOLUMN\tVALUE\n");
-
-  for(int i=1;i<=v2;i++)
-  {
-scanf("%d%d%d",&b[i][0],&b[i][1],&b[i][2]);
-
-  }
-
-
-
-if(r1!=r2 || c1!=c2)
-  {
-  printf("Addition not possible");
-  }
-else
-  {
-  for(int i=1,j=1;i<=v1||j<=v2;)
-  { count++;
-  if(a[i][0]>b[j][0])
-  {
-    c[k][0]=b[j][0];
-    c[k][1]=b[j][1];
-    c[k][2]=b[j][2];
-    j++,k++;
-  }
-  else if(a[i][0]<b[j][0])
-   {
-    c[k][0]=a[i][0]; 
-    c[k][1]=a[i][1];
-    c[k][2]=a[i][2];
-    i++,k++;
-   }
-   else if(a[i][1]>b[j][1])
-   {
-    c[k][0]=b[j][0];
-    c[k][1]=b[j][1];
-    c[k][2]=b[j][2];
-   j++,k++;
-   }
-   else if(a[i][1]<b[j][1])
-   {
-    c[k][0]=a[i][0]; 
-    c[k][1]=a[i][1];
-    c[k][2]=a[i][2];
-    i++,k++;
-   }
-  else
-  {
-   c[k][0]=a[i][0];
-   c[k][1]=a[i][1];
-   c[k][2]=a[i][2]+b[j][2];
-   i++,j++,k++;
-  }
-}
-}
-
-printf("Sum of 2 Sparse Matrix is :\n");
-printf("ROW\tCOLUMN\tVALUE\n");
-for(int i=0;i<k;i++)
-{
-printf("%d\t\t%d\t\t%d\n",c[i][0],c[i][1],c[i][2]);
-}
-case 3:
-
-printf("Enter no of rows,columns and values of matrix 1\n");
-  scanf("%d%d%d",&r1,&c1,&v1);
-  a[0][0]=r1;
-  a[0][1]=c1;
-  a[0][2]=v1;
-  printf("----MATRIX_1----\n");
-  printf("ROW\tCOLUMN\tVALUE\n");
-
-  for(int i=1;i<=v1;i++)
-  {
-    scanf("%d%d%d",&a[i][0],&a[i][1],&a[i][2]);
-
-  }
-
-b[0][0]=c1;
-b[0][1]=r1;
-b[0][2]=v1;
-for(int i=0;i<c1;i++)
-{
-  for(int j=0;j<=v1;j++)
-  {
-
-    if(i==a[j][1])
-    {b[k][0]=i;
-    b[k][1]=a[j][0];
-    b[k][2]=a[j][2];
-      k++;
-    }
-  }
-}
-printf("Transpose Matrix:\n");
-printf("ROW\tCOLUMN\tVALUE\n");
-for(int i=1;i<=v1;i++)
-{
-  printf("%d\t%d\t%d\t\n",b[i][0],b[i][1],b[i][2]);
-}
-  }
-
-}
